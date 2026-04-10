@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Stack Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+--bg: #0a0a0f;
+--surface: #111118;
+--border: #1e1e2e;
+--accent: #00ff9d;
+--accent2: #ff6b35;
+--accent3: #7c6af7;
+--text: #e8e8f0;
+--muted: #5a5a7a;
+--done-bg: #0d1f17;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘Syne’, sans-serif;
+min-height: 100vh;
+padding: 24px 16px 60px;
+background-image: radial-gradient(ellipse at 20% 10%, #0d1f1780 0%, transparent 60%),
+radial-gradient(ellipse at 80% 80%, #1a0d2e60 0%, transparent 60%);
+}
+
+header {
+max-width: 680px;
+margin: 0 auto 40px;
+padding-top: 16px;
+}
+
+.eyebrow {
+font-family: ‘Space Mono’, monospace;
+font-size: 11px;
+color: var(–accent);
+letter-spacing: 3px;
+text-transform: uppercase;
+margin-bottom: 12px;
+}
+
+h1 {
+font-size: clamp(28px, 6vw, 42px);
+font-weight: 800;
+line-height: 1.1;
+margin-bottom: 12px;
+}
+
+h1 span { color: var(–accent); }
+
+.subtitle {
+font-size: 15px;
+color: var(–muted);
+line-height: 1.6;
+max-width: 480px;
+}
+
+/* Progress bar */
+.progress-wrap {
+max-width: 680px;
+margin: 0 auto 36px;
+}
+
+.progress-meta {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 8px;
+font-family: ‘Space Mono’, monospace;
+font-size: 11px;
+color: var(–muted);
+}
+
+.progress-count { color: var(–accent); font-weight: 700; }
+
+.progress-bar-bg {
+height: 4px;
+background: var(–border);
+border-radius: 2px;
+overflow: hidden;
+}
+
+.progress-bar-fill {
+height: 100%;
+background: linear-gradient(90deg, var(–accent), var(–accent3));
+border-radius: 2px;
+transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+width: 0%;
+}
+
+/* Phase */
+.phase {
+max-width: 680px;
+margin: 0 auto 12px;
+}
+
+.phase-header {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 14px 0 10px;
+cursor: pointer;
+user-select: none;
+}
+
+.phase-num {
+font-family: ‘Space Mono’, monospace;
+font-size: 10px;
+color: var(–muted);
+letter-spacing: 1px;
+min-width: 28px;
+}
+
+.phase-label {
+font-size: 13px;
+font-weight: 600;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–muted);
+flex: 1;
+}
+
+.phase-tag {
+font-family: ‘Space Mono’, monospace;
+font-size: 10px;
+padding: 3px 8px;
+border-radius: 20px;
+border: 1px solid;
+}
+
+.phase-chevron {
+font-size: 12px;
+color: var(–muted);
+transition: transform 0.3s ease;
+}
+
+.phase.collapsed .phase-chevron { transform: rotate(-90deg); }
+
+.phase-line {
+height: 1px;
+background: var(–border);
+margin-bottom: 8px;
+}
+
+.phase-body { overflow: hidden; transition: max-height 0.4s ease; }
+.phase.collapsed .phase-body { max-height: 0 !important; }
+
+/* Step card */
+.step {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px;
+margin-bottom: 10px;
+overflow: hidden;
+transition: border-color 0.2s, opacity 0.2s;
+}
+
+.step.done {
+background: var(–done-bg);
+border-color: #1a3d2a;
+opacity: 0.75;
+}
+
+.step-top {
+display: flex;
+align-items: center;
+gap: 14px;
+padding: 16px 18px;
+cursor: pointer;
+}
+
+.step-check {
+width: 22px;
+height: 22px;
+border-radius: 50%;
+border: 2px solid var(–border);
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+transition: all 0.2s;
+font-size: 12px;
+}
+
+.step.done .step-check {
+background: var(–accent);
+border-color: var(–accent);
+color: #000;
+}
+
+.step-info { flex: 1; min-width: 0; }
+
+.step-title {
+font-size: 15px;
+font-weight: 600;
+line-height: 1.3;
+margin-bottom: 2px;
+}
+
+.step.done .step-title {
+text-decoration: line-through;
+color: var(–muted);
+}
+
+.step-meta {
+font-family: ‘Space Mono’, monospace;
+font-size: 10px;
+color: var(–muted);
+display: flex;
+gap: 12px;
+flex-wrap: wrap;
+}
+
+.step-badge {
+padding: 2px 7px;
+border-radius: 4px;
+font-size: 9px;
+font-weight: 700;
+letter-spacing: 1px;
+text-transform: uppercase;
+}
+
+.badge-build { background: #1f1a00; color: #f5c400; border: 1px solid #3d3400; }
+.badge-concept { background: #0d0d2e; color: var(–accent3); border: 1px solid #1e1e5a; }
+.badge-tool { background: #1f0d08; color: var(–accent2); border: 1px solid #3d1a10; }
+
+.step-expand-icon {
+font-size: 14px;
+color: var(–muted);
+transition: transform 0.3s;
+flex-shrink: 0;
+}
+
+.step.open .step-expand-icon { transform: rotate(180deg); }
+
+.step-detail {
+max-height: 0;
+overflow: hidden;
+transition: max-height 0.35s ease;
+}
+
+.step.open .step-detail { max-height: 600px; }
+
+.step-detail-inner {
+padding: 0 18px 18px 54px;
+}
+
+.detail-section { margin-bottom: 14px; }
+
+.detail-label {
+font-family: ‘Space Mono’, monospace;
+font-size: 10px;
+color: var(–accent);
+letter-spacing: 2px;
+text-transform: uppercase;
+margin-bottom: 6px;
+}
+
+.detail-text {
+font-size: 13px;
+color: #b0b0c8;
+line-height: 1.65;
+}
+
+.build-box {
+background: #0d1a14;
+border: 1px solid #1a3d2a;
+border-left: 3px solid var(–accent);
+border-radius: 8px;
+padding: 12px 14px;
+font-size: 13px;
+color: #c0f0d0;
+line-height: 1.6;
+}
+
+.resource-list {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+.resource-link {
+font-family: ‘Space Mono’, monospace;
+font-size: 11px;
+color: var(–accent3);
+text-decoration: none;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+
+.resource-link:hover { text-decoration: underline; }
+
+.mark-btn {
+margin-top: 14px;
+padding: 9px 18px;
+border-radius: 8px;
+border: 1px solid var(–accent);
+background: transparent;
+color: var(–accent);
+font-family: ‘Space Mono’, monospace;
+font-size: 11px;
+cursor: pointer;
+letter-spacing: 1px;
+transition: all 0.2s;
+}
+
+.mark-btn:hover { background: var(–accent); color: #000; }
+
+.step.done .mark-btn {
+border-color: var(–muted);
+color: var(–muted);
+}
+
+.step.done .mark-btn:hover {
+background: var(–muted);
+color: #000;
+}
+
+/* Layer key */
+.layer-key {
+max-width: 680px;
+margin: 0 auto 32px;
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+}
+
+.key-item {
+display: flex;
+align-items: center;
+gap: 6px;
+font-family: ‘Space Mono’, monospace;
+font-size: 10px;
+color: var(–muted);
+}
+
+.key-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+}
+
+.confetti-msg {
+max-width: 680px;
+margin: 24px auto 0;
+background: linear-gradient(135deg, #0d1f17, #0d0d2e);
+border: 1px solid var(–accent);
+border-radius: 12px;
+padding: 24px;
+text-align: center;
+display: none;
+}
+
+.confetti-msg.show { display: block; }
+.confetti-msg h2 { font-size: 22px; margin-bottom: 8px; color: var(–accent); }
+.confetti-msg p { font-size: 14px; color: var(–muted); }
+</style>
+
+</head>
+<body>
+
+<header>
+<div class="eyebrow">// your personal roadmap</div>
+<h1>Full Stack<br><span>from zero.</span></h1>
+<p class="subtitle">Every step has something to build. Check it off when you're done. No fluff — just the path.</p>
+</header>
+
+<div class="layer-key">
+<div class="key-item"><div class="key-dot" style="background:#f5c400"></div> Build project</div>
+<div class="key-item"><div class="key-dot" style="background:#7c6af7"></div> Core concept</div>
+<div class="key-item"><div class="key-dot" style="background:#ff6b35"></div> Tool / setup</div>
+</div>
+
+<div class="progress-wrap">
+<div class="progress-meta">
+<span>OVERALL PROGRESS</span>
+<span class="progress-count" id="progressText">0 / 0 complete</span>
+</div>
+<div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+</div>
+
+<div id="roadmap"></div>
+
+<div class="confetti-msg" id="doneMsg">
+<h2>🎉 You did it.</h2>
+<p>You've gone from zero to full stack. Time to build something real and put it on your portfolio.</p>
+</div>
+
+<script>
+const phases = [
+{
+id: 'p1',
+label: 'Phase 01 — The Frontend Foundation',
+tag: 'Weeks 1–3',
+tagColor: '#f5c400',
+steps: [
+{
+id: 's1',
+title: 'Understand what HTML actually is',
+type: 'concept',
+time: '~2 hrs',
+layer: 'Frontend',
+why: 'HTML is the skeleton of every webpage. Before you can build anything, you need to understand that a webpage is just a text file with special tags that tell the browser what things are.',
+build: 'Build a simple "About Me" page with your name, a short bio, a list of your interests, and a link to your favorite website. No styling yet — raw HTML only.',
+resources: [
+{ label: 'MDN: HTML Basics', url: 'https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics' },
+{ label: 'freeCodeCamp: Responsive Web Design', url: 'https://www.freecodecamp.org/learn/2022/responsive-web-design/' }
+]
+},
+{
+id: 's2',
+title: 'Make it look good with CSS',
+type: 'build',
+time: '~3 hrs',
+layer: 'Frontend',
+why: 'CSS is what transforms a plain text document into something beautiful. It controls colors, fonts, spacing, and layout. This is where creativity starts to matter.',
+build: 'Style your About Me page. Give it a background color, pick a font from Google Fonts, make it centered on the page, and add some padding so it doesn\'t feel cramped.',
+resources: [
+{ label: 'CSS Tricks: A Complete Guide to Flexbox', url: 'https://css-tricks.com/snippets/css/a-guide-to-flexbox/' },
+{ label: 'freeCodeCamp CSS challenges', url: 'https://www.freecodecamp.org/learn/2022/responsive-web-design/#learn-basic-css-by-building-a-cafe-menu' }
+]
+},
+{
+id: 's3',
+title: 'Add behavior with JavaScript',
+type: 'concept',
+time: '~4 hrs',
+layer: 'Frontend',
+why: 'HTML is structure. CSS is style. JavaScript is behavior — it makes things happen when you interact with the page. It\'s your first real programming language.',
+build: 'Add a button to your page that changes the background color when clicked. Then add a form that displays a greeting using whatever name the user types in.',
+resources: [
+{ label: 'javascript.info — The Modern JS Tutorial', url: 'https://javascript.info/' },
+{ label: 'freeCodeCamp: JS Algorithms & Structures', url: 'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/' }
+]
+},
+{
+id: 's4',
+title: 'Build your first real mini-project',
+type: 'build',
+time: '~4 hrs',
+layer: 'Frontend',
+why: 'Reading and doing exercises is one thing. Building something from scratch with no instructions is where real learning happens. This is your first taste of that.',
+build: 'Build a to-do list app using only HTML, CSS, and JavaScript. It should let you type a task, press Enter or a button to add it, and click the task to mark it done (cross it out). No tutorials — just try.',
+resources: [
+{ label: 'MDN: DOM manipulation intro', url: 'https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Manipulating_documents' }
+]
+},
+]
+},
+{
+id: 'p2',
+label: 'Phase 02 — Tools Every Developer Uses',
+tag: 'Weeks 4–5',
+tagColor: '#ff6b35',
+steps: [
+{
+id: 's5',
+title: 'Set up your dev environment',
+type: 'tool',
+time: '~1 hr',
+layer: 'Tooling',
+why: 'Professional developers don\'t code in Notepad. VS Code is the industry-standard editor and it has features that will massively speed up your work.',
+build: 'Install VS Code. Install the Prettier extension (auto-formats your code) and Live Server (auto-refreshes your browser). Open your to-do app project and make sure it all works.',
+resources: [
+{ label: 'VS Code download', url: 'https://code.visualstudio.com/' },
+{ label: 'VS Code beginner tips', url: 'https://code.visualstudio.com/docs/getstarted/tips-and-tricks' }
+]
+},
+{
+id: 's6',
+title: 'Learn Git — how developers save their work',
+type: 'tool',
+time: '~3 hrs',
+layer: 'Tooling',
+why: 'Git is how all developers track changes and collaborate. Think of it like "save points" in a video game, but for code. Every job will require this.',
+build: 'Install Git. Create a GitHub account. Put your to-do app on GitHub using the command line. Learn: git init, git add, git commit, git push. That\'s the daily loop.',
+resources: [
+{ label: 'GitHub: Git Handbook', url: 'https://guides.github.com/introduction/git-handbook/' },
+{ label: 'Learn Git Branching (interactive)', url: 'https://learngitbranching.js.org/' }
+]
+},
+]
+},
+{
+id: 'p3',
+label: 'Phase 03 — The Backend (The Kitchen)',
+tag: 'Weeks 6–9',
+tagColor: '#7c6af7',
+steps: [
+{
+id: 's7',
+title: 'Understand what a server actually does',
+type: 'concept',
+time: '~2 hrs',
+layer: 'Backend',
+why: 'Everything you\'ve built so far only runs in the browser. A server is a computer that\'s always running, listening for requests, and sending back data. This is what makes apps feel "alive."',
+build: 'Write a short paragraph in your own words: what happens when you type google.com and press Enter? Cover: DNS, HTTP request, server, response. Use Google — this is research practice too.',
+resources: [
+{ label: 'MDN: How the web works', url: 'https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/How_the_Web_works' }
+]
+},
+{
+id: 's8',
+title: 'Build a backend with Node.js + Express',
+type: 'build',
+time: '~6 hrs',
+layer: 'Backend',
+why: 'Node.js lets you use JavaScript on the server — so you don\'t need to learn a new language. Express is a tiny framework that makes building servers much simpler.',
+build: 'Build a simple Express server that has 3 routes: GET /hello returns "Hello World", GET /about returns some JSON with your name, and POST /echo takes whatever text you send it and sends it back.',
+resources: [
+{ label: 'Express.js Getting Started', url: 'https://expressjs.com/en/starter/hello-world.html' },
+{ label: 'The Odin Project: NodeJS', url: 'https://www.theodinproject.com/paths/full-stack-javascript/courses/nodejs' }
+]
+},
+{
+id: 's9',
+title: 'Understand REST APIs',
+type: 'concept',
+time: '~2 hrs',
+layer: 'Backend',
+why: 'REST is a set of rules for how frontends and backends talk to each other. GET = fetch data. POST = create something. PUT = update. DELETE = remove. Every web app uses this pattern.',
+build: 'Extend your Express server to be a fake "notes" API: GET /notes (list all), POST /notes (add one), DELETE /notes/:id (remove one). Store notes in a plain JavaScript array for now.',
+resources: [
+{ label: 'REST API concepts explained', url: 'https://restfulapi.net/' }
+]
+},
+]
+},
+{
+id: 'p4',
+label: 'Phase 04 — Databases (The Pantry)',
+tag: 'Weeks 10–12',
+tagColor: '#00ff9d',
+steps: [
+{
+id: 's10',
+title: 'Learn SQL basics',
+type: 'concept',
+time: '~4 hrs',
+layer: 'Database',
+why: 'Databases are how apps remember things after you close the browser. SQL is the language you use to talk to them. It\'s simpler than it sounds and incredibly valuable.',
+build: 'Use SQLite (easiest to set up). Create a "notes" table with id, title, and content columns. Practice: INSERT a note, SELECT all notes, UPDATE one, DELETE one.',
+resources: [
+{ label: 'SQLiteOnline.com — practice in browser', url: 'https://sqliteonline.com/' },
+{ label: 'SQLZoo: interactive SQL learning', url: 'https://sqlzoo.net/' }
+]
+},
+{
+id: 's11',
+title: 'Connect your backend to a real database',
+type: 'build',
+time: '~4 hrs',
+layer: 'Database',
+why: 'Right now your notes disappear when the server restarts. Connecting to a database means data persists. This is the moment your app starts feeling real.',
+build: 'Replace the JavaScript array in your notes API with a real SQLite database. Use the "better-sqlite3" npm package. Now your notes survive a server restart.',
+resources: [
+{ label: 'better-sqlite3 docs', url: 'https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md' }
+]
+},
+]
+},
+{
+id: 'p5',
+label: 'Phase 05 — Connecting It All',
+tag: 'Weeks 13–15',
+tagColor: '#f5c400',
+steps: [
+{
+id: 's12',
+title: 'Make your frontend talk to your backend',
+type: 'build',
+time: '~5 hrs',
+layer: 'Full Stack',
+why: 'This is the moment everything clicks together. Your HTML page makes a request to your Express server, which talks to the database, and sends data back. That\'s the full loop.',
+build: 'Build a notes app UI (HTML/CSS/JS) that uses fetch() to call your notes API. Display all notes on load. Let the user add a new note via a form. Let them delete a note. Everything should persist in the database.',
+resources: [
+{ label: 'MDN: Using Fetch', url: 'https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch' }
+]
+},
+{
+id: 's13',
+title: 'Add user login (authentication)',
+type: 'concept',
+time: '~6 hrs',
+layer: 'Full Stack',
+why: 'Almost every real app needs accounts. Authentication is how you verify someone is who they say they are. This is a big concept but foundational for any real project.',
+build: 'Add sign-up and login to your notes app using email + password. Hash passwords with bcrypt. Use sessions or JWTs to keep users logged in. Only show a user their own notes.',
+resources: [
+{ label: 'Passport.js (auth library)', url: 'https://www.passportjs.org/docs/' },
+{ label: 'JWT explained simply', url: 'https://jwt.io/introduction/' }
+]
+},
+]
+},
+{
+id: 'p6',
+label: 'Phase 06 — Go Live + Get Hired',
+tag: 'Weeks 16–18',
+tagColor: '#ff6b35',
+steps: [
+{
+id: 's14',
+title: 'Deploy your app to the internet',
+type: 'tool',
+time: '~3 hrs',
+layer: 'Deployment',
+why: 'A portfolio project no one can visit isn\'t a portfolio project. Deploying means putting your app on a real server so anyone with a link can use it. This is also a key skill employers look for.',
+build: 'Deploy your full notes app. Use Railway or Render for the backend (both free tiers). Use Netlify or Vercel for the frontend. Share the live link in a GitHub README.',
+resources: [
+{ label: 'Railway.app (backend hosting)', url: 'https://railway.app/' },
+{ label: 'Netlify (frontend hosting)', url: 'https://www.netlify.com/' }
+]
+},
+{
+id: 's15',
+title: 'Build YOUR passion project',
+type: 'build',
+time: 'Ongoing',
+layer: 'Portfolio',
+why: 'This is what separates you in interviews. Not a tutorial project — something YOU thought of and built because you cared about it. Employers love seeing initiative and passion.',
+build: 'Think of a problem in your life you\'d want an app to solve. Build it using everything you\'ve learned. It doesn\'t have to be perfect — it has to be yours. Document it on GitHub with a good README and screenshots.',
+resources: [
+{ label: 'How to write a great README', url: 'https://www.makeareadme.com/' },
+{ label: 'Portfolio tips for developers', url: 'https://www.freecodecamp.org/news/how-to-build-a-developer-portfolio-website/' }
+]
+},
+]
+}
+];
+
+// Load state
+function loadState() {
+try {
+return JSON.parse(localStorage.getItem('fsroadmap') || '{}');
+} catch { return {}; }
+}
+
+function saveState(state) {
+try { localStorage.setItem('fsroadmap', JSON.stringify(state)); } catch {}
+}
+
+let state = loadState();
+
+function totalSteps() {
+return phases.reduce((acc, p) => acc + p.steps.length, 0);
+}
+
+function completedSteps() {
+return Object.values(state).filter(Boolean).length;
+}
+
+function updateProgress() {
+const total = totalSteps();
+const done = completedSteps();
+const pct = total ? (done / total * 100) : 0;
+document.getElementById('progressBar').style.width = pct + '%';
+document.getElementById('progressText').textContent = `${done} / ${total} complete`;
+document.getElementById('doneMsg').classList.toggle('show', done === total && total > 0);
+}
+
+function getBadge(type) {
+if (type === 'build') return '<span class="step-badge badge-build">BUILD</span>';
+if (type === 'concept') return '<span class="step-badge badge-concept">CONCEPT</span>';
+return '<span class="step-badge badge-tool">TOOL</span>';
+}
+
+function renderStep(step) {
+const done = !!state[step.id];
+const div = document.createElement('div');
+div.className = 'step' + (done ? ' done' : '');
+div.id = step.id;
+
+div.innerHTML = `
+<div class="step-top">
+<div class="step-check">${done ? '✓' : ''}</div>
+<div class="step-info">
+<div class="step-title">${step.title}</div>
+<div class="step-meta">
+${getBadge(step.type)}
+<span>${step.layer}</span>
+<span>${step.time}</span>
+</div>
+</div>
+<div class="step-expand-icon">▾</div>
+</div>
+<div class="step-detail">
+<div class="step-detail-inner">
+<div class="detail-section">
+<div class="detail-label">Why this matters</div>
+<div class="detail-text">${step.why}</div>
+</div>
+<div class="detail-section">
+<div class="detail-label">What to build</div>
+<div class="build-box">${step.build}</div>
+</div>
+${step.resources.length ? `
+<div class="detail-section">
+<div class="detail-label">Where to learn it</div>
+<div class="resource-list">
+${step.resources.map(r => `<a class="resource-link" href="${r.url}" target="_blank">↗ ${r.label}</a>`).join('')}
+</div>
+</div>` : ''}
+<button class="mark-btn" data-id="${step.id}">${done ? 'Mark incomplete' : 'Mark complete ✓'}</button>
+</div>
+</div>
+`;
+
+// Toggle open/close
+div.querySelector('.step-top').addEventListener('click', () => {
+div.classList.toggle('open');
+});
+
+div.querySelector('.mark-btn').addEventListener('click', (e) => {
+e.stopPropagation();
+state[step.id] = !state[step.id];
+saveState(state);
+render();
+});
+
+return div;
+}
+
+function render() {
+const container = document.getElementById('roadmap');
+const openPhases = {};
+const openSteps = {};
+
+// Save current open states
+container.querySelectorAll('.phase').forEach(el => {
+openPhases[el.id] = !el.classList.contains('collapsed');
+});
+container.querySelectorAll('.step').forEach(el => {
+openSteps[el.id] = el.classList.contains('open');
+});
+
+container.innerHTML = '';
+
+phases.forEach(phase => {
+const phaseEl = document.createElement('div');
+phaseEl.className = 'phase';
+phaseEl.id = phase.id;
+
+const completedInPhase = phase.steps.filter(s => state[s.id]).length;
+const isCollapsed = openPhases[phase.id] === false;
+if (isCollapsed) phaseEl.classList.add('collapsed');
+
+const bodyEl = document.createElement('div');
+bodyEl.className = 'phase-body';
+
+phase.steps.forEach(step => {
+const stepEl = renderStep(step);
+if (openSteps[step.id]) stepEl.classList.add('open');
+bodyEl.appendChild(stepEl);
+});
+
+phaseEl.innerHTML = `
+<div class="phase-header">
+<span class="phase-num">${phase.label.split('—')[0].trim()}</span>
+<span class="phase-label">${phase.label.split('—')[1]?.trim() || ''}</span>
+<span class="phase-tag" style="color:${phase.tagColor};border-color:${phase.tagColor}40;background:${phase.tagColor}10">${completedInPhase}/${phase.steps.length}</span>
+<span class="phase-chevron">▾</span>
+</div>
+<div class="phase-line"></div>
+`;
+
+phaseEl.appendChild(bodyEl);
+
+// Set max-height after append
+phaseEl.querySelector('.phase-header').addEventListener('click', () => {
+phaseEl.classList.toggle('collapsed');
+if (!phaseEl.classList.contains('collapsed')) {
+bodyEl.style.maxHeight = bodyEl.scrollHeight + 'px';
+} else {
+bodyEl.style.maxHeight = '0';
+}
+});
+
+if (!isCollapsed) {
+bodyEl.style.maxHeight = 'none';
+}
+
+container.appendChild(phaseEl);
+});
+
+updateProgress();
+}
+
+render();
+</script>
+
+</body>
+</html>
