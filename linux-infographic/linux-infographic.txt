@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Linux Works</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: #f0ece4;
+font-family: ‘DM Sans’, sans-serif;
+display: flex;
+justify-content: center;
+padding: 24px 12px 40px;
+min-height: 100vh;
+}
+
+.poster {
+width: 100%;
+max-width: 520px;
+background: #faf8f4;
+border: 2px solid #1a1a2e;
+border-radius: 4px;
+overflow: hidden;
+box-shadow: 6px 6px 0 #1a1a2e;
+}
+
+/* HEADER */
+.poster-header {
+background: #1a1a2e;
+padding: 20px 24px 16px;
+position: relative;
+overflow: hidden;
+}
+
+.poster-header::after {
+content: ‘’;
+position: absolute;
+bottom: -1px; left: 0; right: 0;
+height: 3px;
+background: repeating-linear-gradient(90deg, #00e676 0px, #00e676 12px, transparent 12px, transparent 18px);
+}
+
+.header-top {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+margin-bottom: 4px;
+}
+
+.header-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 46px;
+line-height: 0.95;
+color: #faf8f4;
+letter-spacing: 1px;
+}
+
+.header-title em {
+color: #00e676;
+font-style: normal;
+}
+
+.tux {
+font-size: 42px;
+line-height: 1;
+margin-top: 2px;
+}
+
+.header-sub {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 10px;
+color: #6b7280;
+letter-spacing: 2px;
+text-transform: uppercase;
+margin-top: 6px;
+}
+
+/* SECTION LABEL */
+.section-label {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: #9ca3af;
+padding: 10px 20px 4px;
+}
+
+/* BOOT FLOW — left column with numbered steps and arrows */
+.boot-section {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 0;
+padding: 8px 20px 16px;
+border-bottom: 2px solid #1a1a2e;
+}
+
+.boot-col {
+display: flex;
+flex-direction: column;
+gap: 0;
+}
+
+.boot-item {
+display: flex;
+align-items: flex-start;
+gap: 10px;
+position: relative;
+padding-bottom: 14px;
+}
+
+.boot-item:last-child { padding-bottom: 0; }
+
+.boot-item-left {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 0;
+width: 32px;
+flex-shrink: 0;
+}
+
+.boot-num-circle {
+width: 28px;
+height: 28px;
+border-radius: 50%;
+border: 2px solid;
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 11px;
+font-weight: 700;
+flex-shrink: 0;
+background: #faf8f4;
+position: relative;
+z-index: 1;
+}
+
+.boot-connector {
+width: 2px;
+flex: 1;
+min-height: 10px;
+border-left: 2px dashed #d1d5db;
+margin-top: 2px;
+}
+
+.boot-item:last-child .boot-connector { display: none; }
+
+.boot-text { padding-top: 4px; }
+
+.boot-name {
+font-size: 12px;
+font-weight: 700;
+color: #1a1a2e;
+line-height: 1.2;
+margin-bottom: 2px;
+}
+
+.boot-desc {
+font-size: 10px;
+color: #6b7280;
+line-height: 1.4;
+}
+
+/* KERNEL CENTER SECTION */
+.kernel-section {
+border-bottom: 2px solid #1a1a2e;
+padding: 12px 20px;
+}
+
+.kernel-box {
+background: #1a1a2e;
+border-radius: 4px;
+padding: 14px 16px;
+display: flex;
+align-items: center;
+gap: 14px;
+margin-bottom: 12px;
+position: relative;
+overflow: hidden;
+}
+
+.kernel-box::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 3px;
+background: linear-gradient(90deg, #00e676, #7c6af7, #ff6b35, #38bdf8);
+}
+
+.kernel-glyph {
+font-size: 36px;
+line-height: 1;
+}
+
+.kernel-text-wrap { flex: 1; }
+
+.kernel-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 28px;
+color: #faf8f4;
+letter-spacing: 2px;
+line-height: 1;
+margin-bottom: 2px;
+}
+
+.kernel-subtitle {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+color: #6b7280;
+letter-spacing: 2px;
+}
+
+.kernel-desc {
+font-size: 11px;
+color: #374151;
+line-height: 1.5;
+padding: 0 2px;
+}
+
+/* KERNEL RESPONSIBILITIES */
+.resp-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+padding: 0 20px 16px;
+border-bottom: 2px solid #1a1a2e;
+}
+
+.resp-card {
+border: 1.5px solid #e5e7eb;
+border-radius: 4px;
+padding: 10px 12px;
+border-top: 3px solid;
+background: #fff;
+}
+
+.resp-icon { font-size: 18px; margin-bottom: 4px; }
+.resp-name {
+font-size: 11px;
+font-weight: 700;
+color: #1a1a2e;
+margin-bottom: 3px;
+line-height: 1.2;
+}
+.resp-detail {
+font-size: 10px;
+color: #6b7280;
+line-height: 1.4;
+}
+
+/* LAYER STACK */
+.layer-section {
+padding: 8px 20px 16px;
+border-bottom: 2px solid #1a1a2e;
+}
+
+.layer-row {
+display: flex;
+align-items: stretch;
+margin-bottom: 3px;
+gap: 8px;
+}
+
+.layer-bar {
+flex: 1;
+padding: 8px 12px;
+border-radius: 3px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+border: 1.5px solid;
+}
+
+.layer-bar-left {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.layer-emoji { font-size: 16px; }
+.layer-name-text { font-size: 12px; font-weight: 700; }
+.layer-desc-text { font-size: 10px; opacity: 0.7; }
+
+.layer-arrow {
+display: flex;
+align-items: center;
+justify-content: center;
+color: #9ca3af;
+font-size: 14px;
+padding: 0 2px;
+}
+
+/* SYSTEM CALLS BRIDGE */
+.syscall-bridge {
+margin: 4px 20px;
+padding: 8px 12px;
+background: #fef3c7;
+border: 1.5px dashed #f59e0b;
+border-radius: 4px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.syscall-bridge .sc-icon { font-size: 16px; }
+.syscall-bridge .sc-text {
+font-size: 10px;
+color: #92400e;
+line-height: 1.4;
+}
+.syscall-bridge .sc-text strong { display: block; font-size: 11px; }
+
+/* ANALOGY BAR */
+.analogy-bar {
+background: #ecfdf5;
+border-top: 2px solid #1a1a2e;
+padding: 12px 20px;
+display: flex;
+gap: 10px;
+align-items: flex-start;
+}
+
+.analogy-label {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+letter-spacing: 2px;
+color: #059669;
+text-transform: uppercase;
+white-space: nowrap;
+padding-top: 2px;
+font-weight: 700;
+}
+
+.analogy-text {
+font-size: 11px;
+color: #065f46;
+line-height: 1.5;
+}
+
+/* FOOTER */
+.poster-footer {
+background: #1a1a2e;
+padding: 10px 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.footer-text {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+color: #4b5563;
+letter-spacing: 1px;
+}
+
+.footer-dot {
+width: 6px; height: 6px;
+border-radius: 50%;
+background: #00e676;
+box-shadow: 0 0 6px #00e676;
+}
+
+/* Animations */
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(12px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.poster > * {
+animation: fadeUp 0.4s ease both;
+}
+.poster > *:nth-child(1) { animation-delay: 0.05s; }
+.poster > *:nth-child(2) { animation-delay: 0.1s; }
+.poster > *:nth-child(3) { animation-delay: 0.15s; }
+.poster > *:nth-child(4) { animation-delay: 0.2s; }
+.poster > *:nth-child(5) { animation-delay: 0.25s; }
+.poster > *:nth-child(6) { animation-delay: 0.3s; }
+.poster > *:nth-child(7) { animation-delay: 0.35s; }
+</style>
+
+</head>
+<body>
+<div class="poster">
+
+<!-- HEADER -->
+
+<div class="poster-header">
+<div class="header-top">
+<div class="header-title">HOW<br><em>LINUX</em><br>WORKS</div>
+<div class="tux">🐧</div>
+</div>
+<div class="header-sub">// from power button → running OS</div>
+</div>
+
+<!-- BOOT SEQUENCE -->
+
+<div class="section-label">① Boot Sequence — what happens when you press power</div>
+<div class="boot-section">
+<div class="boot-col">
+<div class="boot-item">
+<div class="boot-item-left">
+<div class="boot-num-circle" style="border-color:#f59e0b;color:#f59e0b">01</div>
+<div class="boot-connector"></div>
+</div>
+<div class="boot-text">
+<div class="boot-name">Power On</div>
+<div class="boot-desc">Electricity hits the motherboard. Nothing is running yet.</div>
+</div>
+</div>
+<div class="boot-item">
+<div class="boot-item-left">
+<div class="boot-num-circle" style="border-color:#38bdf8;color:#38bdf8">02</div>
+<div class="boot-connector"></div>
+</div>
+<div class="boot-text">
+<div class="boot-name">BIOS</div>
+<div class="boot-desc">Chip checks all hardware exists. Finds the hard drive.</div>
+</div>
+</div>
+<div class="boot-item">
+<div class="boot-item-left">
+<div class="boot-num-circle" style="border-color:#ff6b35;color:#ff6b35">03</div>
+</div>
+<div class="boot-text">
+<div class="boot-name">Boot Loader</div>
+<div class="boot-desc">Finds Linux on disk and loads it into memory.</div>
+</div>
+</div>
+</div>
+
+```
+<div class="boot-col">
+<div class="boot-item">
+<div class="boot-item-left">
+<div class="boot-num-circle" style="border-color:#7c6af7;color:#7c6af7">04</div>
+<div class="boot-connector"></div>
+</div>
+<div class="boot-text">
+<div class="boot-name">Kernel Loads</div>
+<div class="boot-desc">Core OS takes over. Now manages all hardware.</div>
+</div>
+</div>
+<div class="boot-item">
+<div class="boot-item-left">
+<div class="boot-num-circle" style="border-color:#00e676;color:#00e676">05</div>
+<div class="boot-connector"></div>
+</div>
+<div class="boot-text">
+<div class="boot-name">Init Process</div>
+<div class="boot-desc">First process starts. Spawns WiFi, sound, display…</div>
+</div>
+</div>
+<div class="boot-item">
+<div class="boot-item-left">
+<div class="boot-num-circle" style="border-color:#f472b6;color:#f472b6">06</div>
+</div>
+<div class="boot-text">
+<div class="boot-name">Shell / GUI</div>
+<div class="boot-desc">You're in. Terminal or desktop is ready.</div>
+</div>
+</div>
+</div>
+```
+
+</div>
+
+<!-- KERNEL -->
+
+<div class="section-label">② The Kernel — the brain of the OS</div>
+<div class="kernel-section">
+<div class="kernel-box">
+<div class="kernel-glyph">⚙️</div>
+<div class="kernel-text-wrap">
+<div class="kernel-title">THE KERNEL</div>
+<div class="kernel-subtitle">// privileged mode · full hardware access</div>
+</div>
+</div>
+<div class="kernel-desc">
+The Kernel sits between your software and the physical hardware. Every app must ask the Kernel permission to use memory, files, or devices. It is the gatekeeper of everything.
+</div>
+</div>
+
+<!-- KERNEL RESPONSIBILITIES -->
+
+<div class="section-label">③ What the Kernel manages</div>
+<div class="resp-grid">
+<div class="resp-card" style="border-top-color:#38bdf8">
+<div class="resp-icon">🧠</div>
+<div class="resp-name">Process Management</div>
+<div class="resp-detail">Tracks every running program. Shares CPU time between them.</div>
+</div>
+<div class="resp-card" style="border-top-color:#f472b6">
+<div class="resp-icon">🗂️</div>
+<div class="resp-name">Memory Management</div>
+<div class="resp-detail">Controls RAM. Stops programs stealing each other's memory.</div>
+</div>
+<div class="resp-card" style="border-top-color:#ff6b35">
+<div class="resp-icon">🔌</div>
+<div class="resp-name">Device Drivers</div>
+<div class="resp-detail">Translates between software and physical hardware (keyboard, GPU…).</div>
+</div>
+<div class="resp-card" style="border-top-color:#00e676">
+<div class="resp-icon">📁</div>
+<div class="resp-name">File System</div>
+<div class="resp-detail">Organizes your files. Controls who can read or write what.</div>
+</div>
+</div>
+
+<!-- LAYER STACK -->
+
+<div class="section-label">④ The full layer stack</div>
+
+<div class="layer-section">
+<div class="layer-row">
+<div class="layer-bar" style="background:#fef9ee;border-color:#f59e0b">
+<div class="layer-bar-left">
+<div class="layer-emoji">👤</div>
+<div>
+<div class="layer-name-text" style="color:#92400e">You</div>
+<div class="layer-desc-text" style="color:#b45309">Type a command or click</div>
+</div>
+</div>
+</div>
+</div>
+<div class="layer-arrow">↓</div>
+<div class="layer-row">
+<div class="layer-bar" style="background:#f5f3ff;border-color:#7c6af7">
+<div class="layer-bar-left">
+<div class="layer-emoji">🖥️</div>
+<div>
+<div class="layer-name-text" style="color:#4c1d95">Shell / GUI</div>
+<div class="layer-desc-text" style="color:#6d28d9">Terminal or desktop interface</div>
+</div>
+</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c6af7;letter-spacing:1px">USER SPACE</div>
+</div>
+</div>
+<div class="layer-arrow">↓</div>
+<div class="layer-row">
+<div class="layer-bar" style="background:#f0fdf4;border-color:#00e676">
+<div class="layer-bar-left">
+<div class="layer-emoji">📦</div>
+<div>
+<div class="layer-name-text" style="color:#065f46">Applications</div>
+<div class="layer-desc-text" style="color:#059669">Browser, editor, Spotify…</div>
+</div>
+</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#059669;letter-spacing:1px">USER SPACE</div>
+</div>
+</div>
+
+```
+<div class="layer-arrow">↓</div>
+
+<!-- syscall bridge -->
+<div style="margin: 0 0 4px;">
+<div class="syscall-bridge">
+<div class="sc-icon">📞</div>
+<div class="sc-text">
+<strong>System Calls — the bridge</strong>
+Apps can't touch hardware directly. They make a "system call" — a polite request to the Kernel. The Kernel decides yes or no.
+</div>
+</div>
+</div>
+
+<div class="layer-arrow">↓</div>
+
+<div class="layer-row">
+<div class="layer-bar" style="background:#1a1a2e;border-color:#7c6af7">
+<div class="layer-bar-left">
+<div class="layer-emoji">⚙️</div>
+<div>
+<div class="layer-name-text" style="color:#e8e8f0">Kernel</div>
+<div class="layer-desc-text" style="color:#7c6af7">Full access to everything</div>
+</div>
+</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#00e676;letter-spacing:1px">KERNEL SPACE</div>
+</div>
+</div>
+<div class="layer-arrow">↓</div>
+<div class="layer-row">
+<div class="layer-bar" style="background:#fff7ed;border-color:#ff6b35">
+<div class="layer-bar-left">
+<div class="layer-emoji">🔩</div>
+<div>
+<div class="layer-name-text" style="color:#7c2d12">Hardware</div>
+<div class="layer-desc-text" style="color:#c2410c">CPU · RAM · Disk · Network</div>
+</div>
+</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#ff6b35;letter-spacing:1px">PHYSICAL</div>
+</div>
+</div>
+```
+
+</div>
+
+<!-- ANALOGY -->
+
+<div class="analogy-bar">
+<div class="analogy-label">→ FS TIP</div>
+<div class="analogy-text">This layered model mirrors full stack web dev exactly — <strong>User → Frontend → Backend → Database → Server hardware.</strong> Same concept, different context.</div>
+</div>
+
+<!-- FOOTER -->
+
+<div class="poster-footer">
+<div class="footer-text">HOW LINUX WORKS · VISUAL REFERENCE</div>
+<div class="footer-dot"></div>
+<div class="footer-text">FULL STACK ROADMAP</div>
+</div>
+
+</div>
+</body>
+</html>
